@@ -1,0 +1,38 @@
+export const colors = {
+  tora: {
+    primary: '#FD9450',
+    secondary: '#CF4B63',
+    accent: '#CEB768',
+    background: '#FFFFFF',
+    surface: '#FFF8F2',
+    surfaceAlt: '#FEF0E5',
+    text: '#1A3A4E',
+    textMuted: '#50667B',
+    border: '#F5D4BC',
+    info: '#62CBEE',
+    success: '#98C75F',
+    warning: '#F25566',
+    danger: '#CF4B63',
+    pink: '#E464A0',
+    cream: '#FFF8F2',
+  },
+  spy: {
+    primary: '#57675C',
+    secondary: '#CE351C',
+    accent: '#EECB61',
+    background: '#FDFBF6',
+    surface: '#FFFFFF',
+    surfaceAlt: '#FFEFE0',
+    text: '#2C2827',
+    textMuted: '#57675C',
+    border: '#E8E0D8',
+    info: '#8DA99B',
+    success: '#8DA99B',
+    warning: '#CE351C',
+    danger: '#610A10',
+    pink: '#F5BAB4',
+    cream: '#F4EFEB',
+  },
+} as const;
+
+export type ThemeColorKey = keyof (typeof colors)['tora'];
