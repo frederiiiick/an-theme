@@ -1,6 +1,7 @@
 import {
   useState,
   useLayoutEffect,
+  useEffect,
   useRef,
   useCallback,
   type ReactNode,
@@ -9,6 +10,7 @@ import { AnThemeContext } from './theme-context';
 import type { ThemeId } from '../themes/types';
 import { themes } from '../themes';
 import { applyTheme } from '../utils/apply-theme';
+import { injectPulseStyles, createPulseElement } from './pulse-styles';
 
 export interface AnThemeProviderProps {
   theme?: ThemeId;
@@ -46,6 +48,25 @@ export function AnThemeProvider({
     }
     injectFontLink(currentTheme.typography.fontImportUrl);
   }, [currentTheme]);
+
+  useEffect(() => {
+    if (themeId !== 'tora') return;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    injectPulseStyles();
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    function handleMouseDown(e: MouseEvent) {
+      createPulseElement(e.clientX, e.clientY, container!);
+    }
+
+    container.addEventListener('mousedown', handleMouseDown);
+    return () => container.removeEventListener('mousedown', handleMouseDown);
+  }, [themeId]);
 
   const setTheme = useCallback((id: ThemeId) => {
     setThemeId(id);

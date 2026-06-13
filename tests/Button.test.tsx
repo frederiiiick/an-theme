@@ -33,28 +33,55 @@ describe('Button', () => {
     expect(button).toHaveAttribute('aria-busy', 'true');
   });
 
-  it('applies variant classes', () => {
-    const { rerender } = render(
-      <AnThemeProvider theme="tora">
-        <Button variant="primary">Primary</Button>
-      </AnThemeProvider>,
-    );
+  it('applies solid variant with inline background color', () => {
+    renderWithTheme(<Button variant="solid" color="primary">Solid</Button>);
     const button = screen.getByRole('button');
-    expect(button.className).toContain('bg-[var(--an-color-primary)]');
+    expect(button.style.backgroundColor).toBe('var(--an-color-primary)');
+    expect(button.className).toContain('text-white');
+  });
 
-    rerender(
-      <AnThemeProvider theme="tora">
-        <Button variant="outline">Outline</Button>
-      </AnThemeProvider>,
-    );
-    const outlineBtn = screen.getByRole('button');
-    expect(outlineBtn.className).toContain('border-2');
+  it('applies outline variant with inline border and text color', () => {
+    renderWithTheme(<Button variant="outline" color="info">Outline</Button>);
+    const button = screen.getByRole('button');
+    expect(button.style.borderColor).toBe('var(--an-color-info)');
+    expect(button.style.color).toBe('var(--an-color-info)');
+    expect(button.className).toContain('border-2');
+  });
+
+  it('applies ghost variant', () => {
+    renderWithTheme(<Button variant="ghost">Ghost</Button>);
+    const button = screen.getByRole('button');
+    expect(button.className).toContain('bg-transparent');
+  });
+
+  it('applies link variant', () => {
+    renderWithTheme(<Button variant="link" color="secondary">Link</Button>);
+    const button = screen.getByRole('button');
+    expect(button.style.color).toBe('var(--an-color-secondary)');
+    expect(button.className).toContain('rounded-none');
   });
 
   it('applies size classes', () => {
     renderWithTheme(<Button size="lg">Large</Button>);
     const button = screen.getByRole('button');
     expect(button.className).toContain('h-12');
+  });
+
+  it('renders left and right icons', () => {
+    renderWithTheme(
+      <Button leftIcon={<span data-testid="left-icon">L</span>} rightIcon={<span data-testid="right-icon">R</span>}>
+        Text
+      </Button>,
+    );
+    expect(screen.getByTestId('left-icon')).toBeInTheDocument();
+    expect(screen.getByTestId('right-icon')).toBeInTheDocument();
+  });
+
+  it('applies iconOnly sizing', () => {
+    renderWithTheme(<Button iconOnly size="md" leftIcon={<span>+</span>}>plus</Button>);
+    const button = screen.getByRole('button');
+    expect(button.className).toContain('w-10');
+    expect(button.className).toContain('h-10');
   });
 
   it('merges custom className', () => {

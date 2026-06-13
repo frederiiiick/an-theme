@@ -1,7 +1,11 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: 'default' | 'outline' | 'soft';
-  color?: 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'danger';
+  variant?: 'solid' | 'outline' | 'soft' | 'dot';
+  color?: 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'pink';
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
+  removable?: boolean;
+  onRemove?: () => void;
   children: ReactNode;
 }

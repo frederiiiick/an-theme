@@ -1,10 +1,10 @@
 export const typography = {
   tora: {
-    fontHeading: "'Quicksand', sans-serif",
+    fontHeading: "'Varela Round', 'Nunito', sans-serif",
     fontBody: "'Nunito', sans-serif",
-    fontDisplay: "'Quicksand', sans-serif",
+    fontDisplay: "'Varela Round', 'Nunito', sans-serif",
     fontImportUrl:
-      'https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap',
+      'https://fonts.googleapis.com/css2?family=Varela+Round&family=Nunito:wght@300;400;500;600;700&display=swap',
   },
   spy: {
     fontHeading: "'Space Grotesk', sans-serif",

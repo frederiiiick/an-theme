@@ -1,10 +1,10 @@
 export const radius = {
   tora: {
     none: '0px',
-    sm: '8px',
-    md: '12px',
-    lg: '16px',
-    xl: '24px',
+    sm: '9999px',
+    md: '9999px',
+    lg: '24px',
+    xl: '32px',
     full: '9999px',
   },
   spy: {
