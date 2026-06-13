@@ -7,5 +7,6 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   rightIcon?: ReactNode;
   removable?: boolean;
   onRemove?: () => void;
+  animate?: boolean;
   children: ReactNode;
 }

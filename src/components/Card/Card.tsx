@@ -1,4 +1,5 @@
 import { forwardRef, useCallback, useEffect, useRef } from 'react';
+import { animate, stagger } from 'animejs';
 import type { CardProps } from './Card.types';
 import { cn } from '../../utils/cn';
 import { injectPulseStyles, createCardPulse } from '../../providers/pulse-styles';
@@ -29,7 +30,7 @@ const hoverStyles =
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
   (
-    { variant = 'default', color, hoverable = false, className, style, children, ...props },
+    { variant = 'default', color, hoverable = false, animate: shouldAnimate = false, className, style, children, ...props },
     ref,
   ) => {
     const effectiveColor = color ?? (variant === 'striped' ? undefined : 'primary');
@@ -37,6 +38,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     const colorVar = effectiveColor ? colorVarMap[effectiveColor] : null;
 
     const internalRef = useRef<HTMLDivElement | null>(null);
+    const hasAnimated = useRef(false);
 
     const setRefs = useCallback(
       (node: HTMLDivElement | null) => {
@@ -51,6 +53,62 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       if (!hoverable) return;
       injectPulseStyles();
     }, [hoverable]);
+
+    useEffect(() => {
+      if (!shouldAnimate || hasAnimated.current) return;
+
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) {
+        hasAnimated.current = true;
+        return;
+      }
+
+      const container = internalRef.current;
+      if (!container) return;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting && !hasAnimated.current) {
+              hasAnimated.current = true;
+              observer.disconnect();
+
+              animate(container, {
+                opacity: [0, 1],
+                translateY: [30, 0],
+                duration: 500,
+                ease: 'outQuad',
+              });
+
+              const stripeElements = container.querySelectorAll('[data-an-stripe]');
+              if (stripeElements.length > 0) {
+                animate(stripeElements, {
+                  scaleY: [0, 1],
+                  opacity: [0, 0.85],
+                  duration: 500,
+                  delay: stagger(120),
+                  ease: 'outQuad',
+                });
+              }
+
+              const patternOverlay = container.querySelector('[data-an-pattern]') as HTMLElement | null;
+              if (patternOverlay) {
+                animate(patternOverlay, {
+                  opacity: [0, 1],
+                  duration: 600,
+                  delay: 300,
+                  ease: 'outQuad',
+                });
+              }
+            }
+          }
+        },
+        { threshold: 0.2 },
+      );
+
+      observer.observe(container);
+      return () => observer.disconnect();
+    }, [shouldAnimate]);
 
     const handleMouseEnter = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => {
@@ -71,6 +129,10 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     const backgroundColor = isStripedNoColor ? '#ffffff' : `var(${colorVar})`;
     const textColorClass = isStripedNoColor ? 'text-gray-800' : 'text-white';
 
+    const initialStyle: React.CSSProperties = shouldAnimate
+      ? { backgroundColor, opacity: 0, transform: 'translateY(30px)', ...style }
+      : { backgroundColor, ...style };
+
     return (
       <div
         ref={setRefs}
@@ -81,12 +143,13 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
           hoverable && hoverStyles,
           className,
         )}
-        style={{ backgroundColor, ...style }}
+        style={initialStyle}
         onMouseEnter={handleMouseEnter}
         {...props}
       >
         {variant === 'pattern' && (
           <div
+            data-an-pattern
             className="absolute inset-0 pointer-events-none"
             style={{
               backgroundImage:
@@ -94,6 +157,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
               backgroundSize: '14px 14px',
               maskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)',
               WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)',
+              ...(shouldAnimate ? { opacity: 0 } : {}),
             }}
           />
         )}
@@ -112,23 +176,25 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
           />
         )}
         {variant === 'striped' && (() => {
-          const [s1, s2, s3, s4] = getStripeColors(colorVar);
+          const stripeColors = getStripeColors(colorVar);
           return (
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: `linear-gradient(
-                  135deg,
-                  transparent 30%,
-                  ${s1} 30%, ${s1} 33%,
-                  ${s2} 33%, ${s2} 36%,
-                  ${s3} 36%, ${s3} 39%,
-                  ${s4} 39%, ${s4} 42%,
-                  transparent 42%
-                )`,
-                opacity: 0.85,
-              }}
-            />
+            <>
+              {stripeColors.map((color, i) => {
+                const start = 30 + i * 3;
+                const end = start + 3;
+                return (
+                  <div
+                    key={i}
+                    data-an-stripe
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background: `linear-gradient(135deg, transparent ${start}%, ${color} ${start}%, ${color} ${end}%, transparent ${end}%)`,
+                      opacity: shouldAnimate ? 0 : 0.85,
+                    }}
+                  />
+                );
+              })}
+            </>
           );
         })()}
         <div className="relative z-10">{children}</div>

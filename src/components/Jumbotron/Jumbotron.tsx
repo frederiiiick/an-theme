@@ -1,6 +1,8 @@
-import { forwardRef, useId } from 'react';
+import { forwardRef, useId, useMemo } from 'react';
+import { stagger } from 'animejs';
 import type { JumbotronProps } from './Jumbotron.types';
 import { cn } from '../../utils/cn';
+import { useAnimateOnView } from '../../hooks/use-animate-on-view';
 
 const DEFAULT_COLORS = [
   '--an-color-primary',
@@ -123,6 +125,7 @@ export const Jumbotron = forwardRef<HTMLDivElement, JumbotronProps>(
       colors,
       size = 'md',
       label,
+      animate: shouldAnimate = false,
       className,
       ...props
     },
@@ -140,9 +143,33 @@ export const Jumbotron = forwardRef<HTMLDivElement, JumbotronProps>(
     const fontSize = textSizeMap[effectiveChunkSize][size];
     const targetIndex = label ? getTargetCircleIndex(chunks.length) : -1;
 
+    const animationConfig = useMemo(
+      () => ({
+        selector: '[data-an-circle]',
+        animationConfig: {
+          opacity: [0, 1],
+          scale: [0, 1],
+          translateY: [20, 0],
+          delay: stagger(80),
+          duration: 600,
+          ease: 'outElastic(1, 0.6)',
+        },
+        threshold: 0.2,
+      }),
+      [],
+    );
+
+    const { ref: animRef } = useAnimateOnView<HTMLDivElement>(animationConfig, shouldAnimate);
+
+    const setRefs = (node: HTMLDivElement | null) => {
+      (animRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+      if (typeof ref === 'function') ref(node);
+      else if (ref) ref.current = node;
+    };
+
     return (
       <div
-        ref={ref}
+        ref={setRefs}
         className={cn('inline-flex items-center gap-3', className)}
         {...props}
       >
@@ -161,11 +188,15 @@ export const Jumbotron = forwardRef<HTMLDivElement, JumbotronProps>(
                 />
               )}
               <div
+                data-an-circle
                 className={cn(
                   circleClasses,
                   'rounded-full flex items-center justify-center overflow-hidden shrink-0',
                 )}
-                style={{ backgroundColor: `var(${colorVar})` }}
+                style={{
+                  backgroundColor: `var(${colorVar})`,
+                  ...(shouldAnimate ? { opacity: 0, transform: 'scale(0) translateY(20px)' } : {}),
+                }}
                 aria-hidden={isBlank || undefined}
               >
                 {!isBlank && (

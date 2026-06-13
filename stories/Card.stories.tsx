@@ -241,3 +241,27 @@ export const StripedHoverable: Story = {
     hoverable: true,
   },
 };
+
+export const AnimatedEntrance: Story = {
+  name: 'Animated Entrance',
+  render: () => (
+    <div style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
+      <Card variant="default" color="primary" animate>
+        <h3 style={{ margin: '0 0 8px' }}>Default (Animated)</h3>
+        <p style={{ margin: 0, opacity: 0.8 }}>Fades up on view</p>
+      </Card>
+      <Card variant="pattern" color="secondary" animate>
+        <h3 style={{ margin: '0 0 8px' }}>Pattern (Animated)</h3>
+        <p style={{ margin: 0, opacity: 0.8 }}>Pattern fades in after card</p>
+      </Card>
+      <Card variant="striped" color="info" animate>
+        <h3 style={{ margin: '0 0 8px' }}>Striped (Animated)</h3>
+        <p style={{ margin: 0, opacity: 0.8 }}>Stripes slide in</p>
+      </Card>
+      <Card variant="elevated" color="accent" animate>
+        <h3 style={{ margin: '0 0 8px' }}>Elevated (Animated)</h3>
+        <p style={{ margin: 0, opacity: 0.8 }}>Fades up with gloss</p>
+      </Card>
+    </div>
+  ),
+};

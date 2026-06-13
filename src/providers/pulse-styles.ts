@@ -13,6 +13,24 @@ export function injectPulseStyles(): void {
 @keyframes an-card-pulse {
   0% { transform: scale(0); opacity: 0.5; }
   100% { transform: scale(4); opacity: 0; }
+}
+@keyframes an-input-focus-pulse {
+  0% { border-color: var(--an-color-primary); box-shadow: 0 0 0 0px color-mix(in srgb, var(--an-color-primary) 40%, transparent); }
+  8% { border-color: var(--an-color-primary); box-shadow: 0 0 0 5px color-mix(in srgb, var(--an-color-primary) 0%, transparent); }
+  10% { border-color: var(--an-color-primary); box-shadow: 0 0 0 0px transparent; }
+  20% { border-color: var(--an-color-secondary); box-shadow: 0 0 0 0px color-mix(in srgb, var(--an-color-secondary) 40%, transparent); }
+  28% { border-color: var(--an-color-secondary); box-shadow: 0 0 0 5px color-mix(in srgb, var(--an-color-secondary) 0%, transparent); }
+  30% { border-color: var(--an-color-secondary); box-shadow: 0 0 0 0px transparent; }
+  40% { border-color: var(--an-color-info); box-shadow: 0 0 0 0px color-mix(in srgb, var(--an-color-info) 40%, transparent); }
+  48% { border-color: var(--an-color-info); box-shadow: 0 0 0 5px color-mix(in srgb, var(--an-color-info) 0%, transparent); }
+  50% { border-color: var(--an-color-info); box-shadow: 0 0 0 0px transparent; }
+  60% { border-color: var(--an-color-pink); box-shadow: 0 0 0 0px color-mix(in srgb, var(--an-color-pink) 40%, transparent); }
+  68% { border-color: var(--an-color-pink); box-shadow: 0 0 0 5px color-mix(in srgb, var(--an-color-pink) 0%, transparent); }
+  70% { border-color: var(--an-color-pink); box-shadow: 0 0 0 0px transparent; }
+  80% { border-color: var(--an-color-accent); box-shadow: 0 0 0 0px color-mix(in srgb, var(--an-color-accent) 40%, transparent); }
+  88% { border-color: var(--an-color-accent); box-shadow: 0 0 0 5px color-mix(in srgb, var(--an-color-accent) 0%, transparent); }
+  90% { border-color: var(--an-color-accent); box-shadow: 0 0 0 0px transparent; }
+  100% { border-color: var(--an-color-primary); box-shadow: 0 0 0 0px transparent; }
 }`;
   document.head.appendChild(style);
 }
@@ -43,6 +61,21 @@ export function createCardPulse(e: MouseEvent, card: HTMLElement, color: string)
 }
 
 let colorIndex = 0;
+
+const PULSE_COLOR_VARS = [
+  '--an-color-primary',
+  '--an-color-secondary',
+  '--an-color-info',
+  '--an-color-pink',
+  '--an-color-accent',
+];
+
+export function getNextPulseColor(element: HTMLElement): string {
+  const varName = PULSE_COLOR_VARS[colorIndex % PULSE_COLOR_VARS.length];
+  const color = getComputedStyle(element).getPropertyValue(varName).trim() || '#FD9450';
+  colorIndex++;
+  return color;
+}
 
 export function createPulseElement(x: number, y: number, container: HTMLElement): void {
   const colors = [

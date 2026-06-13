@@ -157,3 +157,15 @@ export const AllVariants: Story = {
     </div>
   ),
 };
+
+export const Animated: Story = {
+  name: 'Animated Entrance',
+  render: () => (
+    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+      <Badge color="primary" animate>Animated</Badge>
+      <Badge color="secondary" animate>Badges</Badge>
+      <Badge color="accent" animate>Scale In</Badge>
+      <Badge color="info" animate>On Mount</Badge>
+    </div>
+  ),
+};

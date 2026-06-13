@@ -25,37 +25,37 @@ export function resolvePreset(
     fadeIn: {
       opacity: [0, 1],
       duration: durationNormal,
-      easing,
+      ease: easing,
     },
     fadeUp: {
       opacity: [0, 1],
       translateY: [20, 0],
       duration: durationNormal,
-      easing,
+      ease: easing,
     },
     fadeDown: {
       opacity: [0, 1],
       translateY: [-20, 0],
       duration: durationNormal,
-      easing,
+      ease: easing,
     },
     slideLeft: {
       opacity: [0, 1],
       translateX: [40, 0],
       duration: durationNormal,
-      easing,
+      ease: easing,
     },
     slideRight: {
       opacity: [0, 1],
       translateX: [-40, 0],
       duration: durationNormal,
-      easing,
+      ease: easing,
     },
     scaleIn: {
       opacity: [0, 1],
       scale: [0.9, 1],
       duration: durationNormal,
-      easing,
+      ease: easing,
     },
     glowPulse: {
       boxShadow: [
@@ -65,20 +65,20 @@ export function resolvePreset(
       ],
       duration: durationSlow * 2,
       loop: true,
-      easing: 'easeInOutSine',
+      ease: 'inOutSine',
     },
     float: {
       translateY: [-4, 4],
       duration: durationSlow * 3,
       loop: true,
       alternate: true,
-      easing: 'easeInOutSine',
+      ease: 'inOutSine',
     },
     bounceIn: {
       opacity: [0, 1],
       scale: [0.3, 1],
       duration: durationSlow,
-      easing: 'spring(1, 80, 10)',
+      ease: 'outElastic(1, 0.6)',
     },
   };
 

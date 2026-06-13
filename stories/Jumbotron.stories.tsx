@@ -121,3 +121,22 @@ export const AllSizes: Story = {
     </div>
   ),
 };
+
+export const Animated: Story = {
+  name: 'Animated (Stagger Bounce)',
+  args: {
+    text: 'Toradora',
+    size: 'lg',
+    animate: true,
+  },
+};
+
+export const AnimatedChunk3: Story = {
+  name: 'Animated (Chunk Size 3)',
+  args: {
+    text: 'AnTheme',
+    chunkSize: 3,
+    size: 'lg',
+    animate: true,
+  },
+};

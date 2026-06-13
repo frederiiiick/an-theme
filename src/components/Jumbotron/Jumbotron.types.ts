@@ -7,4 +7,5 @@ export interface JumbotronProps extends HTMLAttributes<HTMLDivElement> {
   colors?: string[];
   size?: 'sm' | 'md' | 'lg';
   label?: string;
+  animate?: boolean;
 }

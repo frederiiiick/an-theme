@@ -1,4 +1,5 @@
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useRef } from 'react';
+import { animate } from 'animejs';
 import { X } from 'lucide-react';
 import type { BadgeProps } from './Badge.types';
 import { cn } from '../../utils/cn';
@@ -14,7 +15,7 @@ const colorVarMap: Record<NonNullable<BadgeProps['color']>, string> = {
 };
 
 const baseStyles =
-  'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-medium rounded-[var(--an-radius-full)] font-[family-name:var(--an-font-body)] transition-colors';
+  'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-medium rounded-[var(--an-radius-full)] font-[family-name:var(--an-font-body)] transition-colors w-fit';
 
 function getVariantStyles(
   variant: NonNullable<BadgeProps['variant']>,
@@ -53,6 +54,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
       rightIcon,
       removable = false,
       onRemove,
+      animate: shouldAnimate = false,
       className,
       style,
       children,
@@ -62,12 +64,42 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
   ) => {
     const colorVar = colorVarMap[color];
     const variantResult = getVariantStyles(variant, colorVar);
+    const internalRef = useRef<HTMLSpanElement | null>(null);
+    const hasAnimated = useRef(false);
+
+    const setRefs = (node: HTMLSpanElement | null) => {
+      internalRef.current = node;
+      if (typeof ref === 'function') ref(node);
+      else if (ref) ref.current = node;
+    };
+
+    useEffect(() => {
+      if (!shouldAnimate || hasAnimated.current || !internalRef.current) return;
+
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) {
+        hasAnimated.current = true;
+        return;
+      }
+
+      hasAnimated.current = true;
+      animate(internalRef.current, {
+        opacity: [0, 1],
+        scale: [0.8, 1],
+        duration: 400,
+        ease: 'outQuad',
+      });
+    }, [shouldAnimate]);
 
     return (
       <span
-        ref={ref}
+        ref={setRefs}
         className={cn(baseStyles, variantResult.className, className)}
-        style={{ ...variantResult.style, ...style }}
+        style={{
+          ...variantResult.style,
+          ...(shouldAnimate && !hasAnimated.current ? { opacity: 0, transform: 'scale(0.8)' } : {}),
+          ...style,
+        }}
         {...props}
       >
         {variant === 'soft' && (
